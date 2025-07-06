@@ -1,9 +1,10 @@
 [tool.poetry]
 name = "stranalyzer"
-version = "0.1"
-description = ""
+version = "1.0.0"
+description = "A comprehensive toolkit for analyzing and comparing trading strategies"
 readme = "README.md"
-package-mode = false
+authors = ["Gianluca Pagliara <pagliara.gianluca@gmail.com>"]
+packages = [{include = "stranalyzer"}]
 
 [tool.poetry.dependencies]
 python = "^3.12"

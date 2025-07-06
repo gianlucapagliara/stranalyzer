@@ -1,5 +1,3 @@
-import streamlit as st
-
 from stranalyzer import run_dashboard
 
 if __name__ == "__main__":

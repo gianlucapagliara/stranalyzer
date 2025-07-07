@@ -41,25 +41,21 @@ class Dashboard:
     def _render_home_section(self) -> None:
         """Render the home section with dashboard introduction."""
 
-        st.markdown("""
-            # 🚀 Welcome to the Strategies Analyzer Dashboard
-            
-            This comprehensive platform helps you analyze, compare, and optimize your investment strategies with professional-grade tools and visualizations.
-            """)
+        st.markdown("""### 🚀 Welcome to the Strategies Analyzer Dashboard""")
 
         col1, col2 = st.columns(2)
 
         with col1:
             st.markdown("""
-            ## 📋 What You Can Do
+            #### 📋 What You Can Do
             
-            ### 📁 File Upload & Data Management
+            ##### 📁 File Upload & Data Management
             - **Upload CSV Files**: Import your strategy returns data in a simple CSV format
             - **Sample Data Generation**: Generate realistic sample data for testing and exploration
             - **Data Validation**: Automatic validation ensures your data is properly formatted
             - **Multiple Formats**: Support for single-strategy or multi-strategy CSV files
             
-            ### 📈 Strategy Analysis
+            ##### 📈 Strategy Analysis
             - **Performance Metrics**: Calculate comprehensive performance statistics including:
             - Sharpe Ratio, Sortino Ratio, Calmar Ratio
             - Maximum Drawdown, Volatility, Beta
@@ -73,13 +69,13 @@ class Dashboard:
             - Risk-return scatter plots
             - Monthly returns heatmaps
             
-            ### 🏗️ Portfolio Composition
+            ##### 🏗️ Portfolio Composition
             - **Custom Portfolios**: Create weighted combinations of your strategies
             - **Weight Optimization**: Flexible weight assignment with normalization
             - **Composite Strategies**: Build and manage multiple portfolio combinations
             - **Dynamic Rebalancing**: Analyze how different weightings affect performance
             
-            ### 📊 Tearsheet Reports
+            ##### 📊 Tearsheet Reports
             - **Professional Reports**: Generate comprehensive PDF tearsheets
             - **Benchmark Comparison**: Compare strategies against benchmarks
             - **Detailed Analytics**: In-depth analysis with tables and charts
@@ -87,14 +83,14 @@ class Dashboard:
             """)
         with col2:
             st.markdown("""
-            ## 🎯 Getting Started
+            #### 🎯 Getting Started
             
             1. **Start with Data**: Go to the "📁 File Upload" tab to upload your strategy data or generate sample data
             2. **Analyze Performance**: Use the "📈 Strategy Analysis" tab to compare strategies and view detailed metrics
             3. **Build Portfolios**: Create custom portfolio combinations in the "🏗️ Portfolio Composition" tab
             4. **Generate Reports**: Create professional tearsheets in the "📊 Tearsheet Reports" tab
             
-            ## 📊 Data Format
+            #### 📊 Data Format
             
             Your CSV files should have the following structure:
             ```

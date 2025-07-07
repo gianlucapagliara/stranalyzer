@@ -22,6 +22,8 @@ class TearsheetGenerator:
         benchmark: pd.Series | None = None,
         output_file: str | None = None,
         title: str = "Dynamic Carry Trading Strategy Performance Report",
+        periods_per_year: int = 365,
+        compounded: bool = True,
     ) -> str:
         """
         Generate a complete QuantStats tearsheet.
@@ -68,6 +70,8 @@ class TearsheetGenerator:
                 benchmark=clean_benchmark,
                 output=output_file,
                 title=title,
+                compounded=compounded,
+                periods_per_year=periods_per_year,
             )
             return output_file
         else:

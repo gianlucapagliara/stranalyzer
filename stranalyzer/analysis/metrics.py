@@ -21,12 +21,17 @@ class PerformanceMetrics:
         try:
             return {
                 "total_return": float(qs.stats.comp(clean_returns)),
-                "cagr": float(qs.stats.cagr(clean_returns)),
-                "volatility": float(qs.stats.volatility(clean_returns)),
-                "sharpe_ratio": float(qs.stats.sharpe(clean_returns)),
-                "sortino_ratio": float(qs.stats.sortino(clean_returns)),
-                "max_drawdown": float(qs.stats.max_drawdown(clean_returns)),
+                "apr": float(
+                    qs.stats.cagr(clean_returns, periods=365, compounded=False)
+                ),
+                "cagr": float(
+                    qs.stats.cagr(clean_returns, periods=365, compounded=True)
+                ),
+                "volatility": float(qs.stats.volatility(clean_returns, periods=365)),
+                "sharpe_ratio": float(qs.stats.sharpe(clean_returns, periods=365)),
+                "sortino_ratio": float(qs.stats.sortino(clean_returns, periods=365)),
                 "calmar_ratio": float(qs.stats.calmar(clean_returns)),
+                "max_drawdown": float(qs.stats.max_drawdown(clean_returns)),
                 "skewness": float(qs.stats.skew(clean_returns)),
                 "kurtosis": float(qs.stats.kurtosis(clean_returns)),
                 "var_95": float(qs.stats.var(clean_returns)),
@@ -69,7 +74,7 @@ class PerformanceMetrics:
 
         try:
             return {
-                "volatility": float(qs.stats.volatility(clean_returns)),
+                "volatility": float(qs.stats.volatility(clean_returns, periods=365)),
                 "max_drawdown": float(qs.stats.max_drawdown(clean_returns)),
                 "var_95": float(qs.stats.var(clean_returns)),
                 "cvar_95": float(qs.stats.cvar(clean_returns)),
@@ -142,7 +147,9 @@ class PerformanceMetrics:
                     lambda x: qs.stats.max_drawdown(x) if len(x) == window else np.nan
                 ),
                 "rolling_sortino": clean_returns.rolling(window).apply(
-                    lambda x: qs.stats.sortino(x) if len(x) == window else np.nan
+                    lambda x: qs.stats.sortino(x, periods=365)
+                    if len(x) == window
+                    else np.nan
                 ),
             }
         except Exception:

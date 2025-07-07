@@ -45,7 +45,7 @@ class Dashboard:
 
         col1, col2 = st.columns(2)
 
-        with col1:
+        with col2:
             st.markdown("""
             #### 📋 What You Can Do
             
@@ -60,14 +60,14 @@ class Dashboard:
             - Sharpe Ratio, Sortino Ratio, Calmar Ratio
             - Maximum Drawdown, Volatility, Beta
             - Value at Risk (VaR) and Expected Shortfall
-            - **Interactive Charts**: Professional-grade visualizations including:
-            - Cumulative returns comparison
-            - Drawdown analysis
-            - Rolling metrics (Sharpe, volatility)
-            - Return distribution analysis
-            - Correlation matrices
-            - Risk-return scatter plots
-            - Monthly returns heatmaps
+            - Interactive Charts:
+                - Cumulative returns comparison
+                - Drawdown analysis
+                - Rolling metrics (Sharpe, volatility)
+                - Return distribution analysis
+                - Correlation matrices
+                - Risk-return scatter plots
+                - Monthly returns heatmaps
             
             ##### 🏗️ Portfolio Composition
             - **Custom Portfolios**: Create weighted combinations of your strategies
@@ -81,7 +81,8 @@ class Dashboard:
             - **Detailed Analytics**: In-depth analysis with tables and charts
             - **Export Options**: Download reports for presentations and documentation
             """)
-        with col2:
+
+        with col1:
             st.markdown("""
             #### 🎯 Getting Started
             

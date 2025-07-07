@@ -310,18 +310,11 @@ class UIComponents:
                     )
 
             # Additional options
-            col1, col2 = st.columns(2)
-            with col1:
-                title = st.text_input(
-                    "Report Title (optional):",
-                    value=f"{tearsheet_strategy} Performance Report",
-                    key="report_title",
-                )
-
-            with col2:
-                include_strategy_info = st.checkbox(
-                    "Include Strategy Information", value=True
-                )
+            title = st.text_input(
+                "Report Title (optional):",
+                value=f"{tearsheet_strategy} Performance Report",
+                key="report_title",
+            )
 
             # Generate report button
             if st.button("🎯 Generate Tearsheet Report", type="primary"):
@@ -427,10 +420,12 @@ class UIComponents:
                     "End Date": period_info.get("end_date", "N/A"),
                     "Data Points": period_info.get("data_points", 0),
                     "Total Return": f"{basic_metrics.get('total_return', 0):.2%}",
-                    "CAGR": f"{basic_metrics.get('cagr', 0):.2%}",
+                    "APR": f"{basic_metrics.get('apr', 0):.2%}",
+                    # "CAGR": f"{basic_metrics.get('cagr', 0):.2%}",
                     "Volatility": f"{basic_metrics.get('volatility', 0):.2%}",
-                    "Sharpe Ratio": f"{basic_metrics.get('sharpe_ratio', 0):.2f}",
                     "Max Drawdown": f"{basic_metrics.get('max_drawdown', 0):.2%}",
+                    "Sharpe Ratio": f"{basic_metrics.get('sharpe_ratio', 0):.2f}",
+                    "Sortino Ratio": f"{basic_metrics.get('sortino_ratio', 0):.2f}",
                     "Calmar Ratio": f"{basic_metrics.get('calmar_ratio', 0):.2f}",
                 }
             )

@@ -9,8 +9,8 @@ import pandas as pd
 class DataLoader:
     """Handles data loading operations including file uploads and sample data generation."""
 
-    def __init__(self):
-        self.data_storage = {}
+    def __init__(self) -> None:
+        self.data_storage: dict[str, pd.Series] = {}
 
     def generate_sample_data(self) -> dict[str, pd.Series]:
         """Generate sample data for testing purposes."""
@@ -20,7 +20,7 @@ class DataLoader:
         date_range = pd.date_range(start="2023-01-01", end="2024-06-30", freq="D")
 
         # Generate sample strategies with different characteristics
-        sample_strategies = {}
+        sample_strategies: dict[str, pd.Series] = {}
 
         # Strategy 1: Low volatility, steady growth
         returns_1 = np.random.normal(
@@ -52,7 +52,7 @@ class DataLoader:
 
         # Strategy 5: Momentum strategy (more volatile)
         returns_5 = []
-        momentum = 0
+        momentum: float = 0.0
         for i in range(len(date_range)):
             momentum = 0.95 * momentum + 0.05 * np.random.normal(0, 0.02)
             daily_return = 0.0008 + momentum + np.random.normal(0, 0.03)
@@ -61,11 +61,11 @@ class DataLoader:
 
         return sample_strategies
 
-    def process_uploaded_file(self, uploaded_file) -> dict[str, Any]:
+    def process_uploaded_file(self, uploaded_file: str) -> dict[str, Any]:
         """Process a single uploaded CSV file."""
         try:
             # Read the CSV file
-            df = pd.read_csv(uploaded_file)
+            df: pd.DataFrame = pd.read_csv(uploaded_file)
 
             result = {
                 "success": True,

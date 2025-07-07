@@ -38,6 +38,83 @@ class Dashboard:
         if "use_sample_data" not in st.session_state:
             st.session_state.use_sample_data = False
 
+    def _render_home_section(self) -> None:
+        """Render the home section with dashboard introduction."""
+
+        st.markdown("""
+            # 🚀 Welcome to the Strategies Analyzer Dashboard
+            
+            This comprehensive platform helps you analyze, compare, and optimize your investment strategies with professional-grade tools and visualizations.
+            """)
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.markdown("""
+            ## 📋 What You Can Do
+            
+            ### 📁 File Upload & Data Management
+            - **Upload CSV Files**: Import your strategy returns data in a simple CSV format
+            - **Sample Data Generation**: Generate realistic sample data for testing and exploration
+            - **Data Validation**: Automatic validation ensures your data is properly formatted
+            - **Multiple Formats**: Support for single-strategy or multi-strategy CSV files
+            
+            ### 📈 Strategy Analysis
+            - **Performance Metrics**: Calculate comprehensive performance statistics including:
+            - Sharpe Ratio, Sortino Ratio, Calmar Ratio
+            - Maximum Drawdown, Volatility, Beta
+            - Value at Risk (VaR) and Expected Shortfall
+            - **Interactive Charts**: Professional-grade visualizations including:
+            - Cumulative returns comparison
+            - Drawdown analysis
+            - Rolling metrics (Sharpe, volatility)
+            - Return distribution analysis
+            - Correlation matrices
+            - Risk-return scatter plots
+            - Monthly returns heatmaps
+            
+            ### 🏗️ Portfolio Composition
+            - **Custom Portfolios**: Create weighted combinations of your strategies
+            - **Weight Optimization**: Flexible weight assignment with normalization
+            - **Composite Strategies**: Build and manage multiple portfolio combinations
+            - **Dynamic Rebalancing**: Analyze how different weightings affect performance
+            
+            ### 📊 Tearsheet Reports
+            - **Professional Reports**: Generate comprehensive PDF tearsheets
+            - **Benchmark Comparison**: Compare strategies against benchmarks
+            - **Detailed Analytics**: In-depth analysis with tables and charts
+            - **Export Options**: Download reports for presentations and documentation
+            """)
+        with col2:
+            st.markdown("""
+            ## 🎯 Getting Started
+            
+            1. **Start with Data**: Go to the "📁 File Upload" tab to upload your strategy data or generate sample data
+            2. **Analyze Performance**: Use the "📈 Strategy Analysis" tab to compare strategies and view detailed metrics
+            3. **Build Portfolios**: Create custom portfolio combinations in the "🏗️ Portfolio Composition" tab
+            4. **Generate Reports**: Create professional tearsheets in the "📊 Tearsheet Reports" tab
+            
+            ## 📊 Data Format
+            
+            Your CSV files should have the following structure:
+            ```
+            date,strategy_name
+            2023-01-01,0.015
+            2023-01-02,-0.008
+            2023-01-03,0.012
+            ...
+            ```
+            
+            Or for multiple strategies:
+            ```
+            date,strategy_1,strategy_2,strategy_3
+            2023-01-01,0.015,-0.008,0.012
+            2023-01-02,-0.008,0.021,-0.005
+            ...
+            ```
+            
+            """)
+
     def run(self) -> None:
         """Run the main dashboard application."""
         # Configure streamlit page
@@ -45,8 +122,9 @@ class Dashboard:
         st.title("Strategies Analyzer Dashboard")
 
         # Main sections in tabs
-        tab1, tab2, tab3, tab4 = st.tabs(
+        tab_home, tab_upload, tab_analysis, tab_portfolio, tab_tearsheet = st.tabs(
             [
+                "🏠 Home",
                 "📁 File Upload",
                 "📈 Strategy Analysis",
                 "🏗️ Portfolio Composition",
@@ -54,8 +132,12 @@ class Dashboard:
             ]
         )
 
+        # Home Section
+        with tab_home:
+            self._render_home_section()
+
         # File Upload Section
-        with tab1:
+        with tab_upload:
             self._render_file_upload_section()
 
         # Get available data
@@ -68,15 +150,15 @@ class Dashboard:
             return
 
         # Strategy Analysis Section
-        with tab2:
+        with tab_analysis:
             self._render_main_analysis_section(available_data)
 
         # Portfolio Composition Section
-        with tab3:
+        with tab_portfolio:
             self._render_portfolio_composition_section(available_data)
 
         # Tearsheet Reports Section
-        with tab4:
+        with tab_tearsheet:
             self._render_tearsheet_section(available_data)
 
     def _render_file_upload_section(self) -> None:

@@ -1,5 +1,7 @@
 """Chart generation functionality for strategy analysis."""
 
+from typing import Literal
+
 import numpy as np
 import pandas as pd
 import plotly.express as px
@@ -25,7 +27,7 @@ class ChartGenerator:
             if len(clean_returns) == 0:
                 continue
 
-            cumulative_returns = (1 + clean_returns).cumprod()
+            cumulative_returns = (1 + clean_returns).cumprod() - 1
 
             # Different line style for composite strategies
             line_style = (
@@ -37,18 +39,18 @@ class ChartGenerator:
             fig.add_trace(
                 go.Scatter(
                     x=cumulative_returns.index,
-                    y=cumulative_returns.values,
+                    y=cumulative_returns.values * 100.0,
                     mode="lines",
                     name=strategy_name,
                     line=line_style,
-                    hovertemplate="%{x}<br>%{y:.2%}<extra></extra>",
+                    hovertemplate="%{x}<br>%{y:.2f}%<extra></extra>",
                 )
             )
 
         fig.update_layout(
             title=title,
             xaxis_title="Date",
-            yaxis_title="Cumulative Return",
+            yaxis_title="Cumulative Return (%)",
             hovermode="x unified",
             height=height,
         )
@@ -86,7 +88,7 @@ class ChartGenerator:
             fig.add_trace(
                 go.Scatter(
                     x=drawdown.index,
-                    y=drawdown.values,
+                    y=drawdown.values * 100.0,
                     mode="lines",
                     name=strategy_name,
                     line=line_style,
@@ -99,7 +101,7 @@ class ChartGenerator:
         fig.update_layout(
             title=title,
             xaxis_title="Date",
-            yaxis_title="Drawdown",
+            yaxis_title="Drawdown (%)",
             hovermode="x unified",
             height=height,
         )
@@ -109,7 +111,7 @@ class ChartGenerator:
     @staticmethod
     def create_rolling_metrics_chart(
         strategies: dict[str, pd.Series],
-        metric: str = "sharpe",
+        metric: Literal["sharpe", "volatility", "returns"] = "sharpe",
         window: int = 252,
         title: str | None = None,
         height: int = 400,
@@ -119,6 +121,12 @@ class ChartGenerator:
 
         if title is None:
             title = f"Rolling {metric.title()} Ratio ({window} days)"
+
+        metric_title = {
+            "sharpe": "Sharpe Ratio",
+            "volatility": "Volatility (%)",
+            "returns": "Returns (%)",
+        }
 
         fig = go.Figure()
 
@@ -134,9 +142,11 @@ class ChartGenerator:
                     * np.sqrt(365)
                 )
             elif metric == "volatility":
-                rolling_metric = clean_returns.rolling(window).std() * np.sqrt(365)
+                rolling_metric = (
+                    clean_returns.rolling(window).std() * np.sqrt(365) * 100.0
+                )
             elif metric == "returns":
-                rolling_metric = clean_returns.rolling(window).mean() * 365
+                rolling_metric = clean_returns.rolling(window).mean() * 365 * 100.0
             else:
                 continue
 
@@ -186,7 +196,7 @@ class ChartGenerator:
                 x=clean_returns.values,
                 nbins=50,
                 title=f"{title} - {strategy_name}",
-                labels={"x": "Returns", "y": "Frequency"},
+                labels={"x": "Returns (%)", "y": "Frequency"},
             )
 
         elif chart_type == "box" or len(strategies) > 1:
@@ -194,7 +204,9 @@ class ChartGenerator:
             dist_data = []
             for strategy_name, returns in strategies.items():
                 clean_returns = returns.dropna()
-                dist_data.extend([(strategy_name, ret) for ret in clean_returns.values])
+                dist_data.extend(
+                    [(strategy_name, ret * 100.0) for ret in clean_returns.values]
+                )
 
             if dist_data:
                 dist_df = pd.DataFrame(dist_data, columns=["Strategy", "Returns"])
@@ -271,7 +283,9 @@ class ChartGenerator:
                     ts = date
                 else:
                     ts = pd.Timestamp(str(date))
-                monthly_data.append({"Year": ts.year, "Month": ts.month, "Return": ret})
+                monthly_data.append(
+                    {"Year": ts.year, "Month": ts.month, "Return": ret * 100.0}
+                )
 
             if not monthly_data:
                 return go.Figure()
@@ -316,6 +330,7 @@ class ChartGenerator:
                 title=title,
                 color_continuous_scale="RdYlGn",
                 color_continuous_midpoint=0,
+                labels={"x": "Month", "y": "Year", "color": "Return (%)"},
             )
 
             fig.update_layout(height=height)

@@ -21,9 +21,10 @@ class TearsheetGenerator:
         returns: pd.Series,
         benchmark: pd.Series | None = None,
         output_file: str | None = None,
-        title: str = "Dynamic Carry Trading Strategy Performance Report",
+        title: str = "Strategy Performance Report",
         periods_per_year: int = 365,
         compounded: bool = True,
+        rf: float = 0,
     ) -> str:
         """
         Generate a complete QuantStats tearsheet.
@@ -33,7 +34,7 @@ class TearsheetGenerator:
             self.returns_series,
             benchmark=benchmark,
             output=output_file,
-            title="Dynamic Carry Trading Strategy Performance Report"
+            title="Strategy Performance Report"
         )
 
         Args:
@@ -72,6 +73,7 @@ class TearsheetGenerator:
                 title=title,
                 compounded=compounded,
                 periods_per_year=periods_per_year,
+                rf=rf,
             )
             return output_file
         else:
@@ -88,6 +90,9 @@ class TearsheetGenerator:
                     benchmark=clean_benchmark,
                     output=temp_path,
                     title=title,
+                    compounded=compounded,
+                    periods_per_year=periods_per_year,
+                    rf=rf,
                 )
 
                 # Read the generated HTML
@@ -108,6 +113,9 @@ class TearsheetGenerator:
         strategy_name: str = "Strategy",
         title: str | None = None,
         output_file: str | None = None,
+        periods_per_year: int = 365,
+        compounded: bool = True,
+        rf: float = 0,
     ) -> str:
         """
         Generate HTML tearsheet report using QuantStats.
@@ -126,7 +134,13 @@ class TearsheetGenerator:
             title = f"{strategy_name} Performance Report"
 
         return TearsheetGenerator.generate_quantstats_tearsheet(
-            returns=returns, benchmark=benchmark, output_file=output_file, title=title
+            returns=returns,
+            benchmark=benchmark,
+            output_file=output_file,
+            title=title,
+            periods_per_year=periods_per_year,
+            compounded=compounded,
+            rf=rf,
         )
 
     @staticmethod

@@ -296,6 +296,7 @@ class UIComponents:
         if tearsheet_strategy:
             # Benchmark selection (optional)
             include_benchmark = st.checkbox("Include Benchmark Comparison", value=False)
+            include_rf = st.checkbox("Include Risk-Free Rate", value=False)
             benchmark_strategy = None
 
             if include_benchmark:
@@ -308,6 +309,17 @@ class UIComponents:
                         benchmark_options,
                         key="benchmark_selector",
                     )
+
+            rf = 0.0
+            if include_rf:
+                rf = st.number_input(
+                    "Risk-Free Rate (%)",
+                    value=4.0,
+                    min_value=0.0,
+                    max_value=10.0,
+                    step=0.1,
+                    format="%.2f",
+                )
 
             # Additional options
             title = st.text_input(
@@ -325,6 +337,7 @@ class UIComponents:
                     composite_strategies,
                     title,
                     benchmark_strategy,
+                    rf=rf / 100.0,
                 )
 
         return None
@@ -337,6 +350,7 @@ class UIComponents:
         composite_strategies: dict[str, Any],
         title: str,
         benchmark_strategy: str | None,
+        rf: float = 0,
     ) -> str:
         """Generate tearsheet report."""
 
@@ -345,13 +359,8 @@ class UIComponents:
                 # Get strategy data
                 if strategy_name in composite_strategies:
                     returns = composite_strategies[strategy_name]["data"]
-                    strategy_info = {
-                        "type": "composite",
-                        "weights": composite_strategies[strategy_name]["weights"],
-                    }
                 else:
                     returns = strategy_data[strategy_name]
-                    strategy_info = {"type": "original"}
 
                 # Get benchmark data if selected
                 benchmark_returns = None
@@ -369,6 +378,9 @@ class UIComponents:
                     benchmark=benchmark_returns,
                     strategy_name=strategy_name,
                     title=title,
+                    periods_per_year=365,
+                    compounded=True,
+                    rf=rf,
                 )
 
                 # Display success message
@@ -421,7 +433,8 @@ class UIComponents:
                     "Data Points": period_info.get("data_points", 0),
                     "Total Return": f"{basic_metrics.get('total_return', 0):.2%}",
                     "APR": f"{basic_metrics.get('apr', 0):.2%}",
-                    # "CAGR": f"{basic_metrics.get('cagr', 0):.2%}",
+                    "AGR": f"{basic_metrics.get('agr', 0):.2%}",
+                    "CAGR": f"{basic_metrics.get('cagr', 0):.2%}",
                     "Volatility": f"{basic_metrics.get('volatility', 0):.2%}",
                     "Max Drawdown": f"{basic_metrics.get('max_drawdown', 0):.2%}",
                     "Sharpe Ratio": f"{basic_metrics.get('sharpe_ratio', 0):.2f}",

@@ -166,6 +166,7 @@ class StrategyAnalyzer:
                     "Data Points": period_info.get("data_points", 0),
                     "Total Return": f"{basic_metrics.get('total_return', 0):.2%}",
                     "APR": f"{basic_metrics.get('apr', 0):.2%}",
+                    "AGR": f"{basic_metrics.get('agr', 0):.2%}",
                     "CAGR": f"{basic_metrics.get('cagr', 0):.2%}",
                     "Volatility": f"{basic_metrics.get('volatility', 0):.2%}",
                     "Sharpe Ratio": f"{basic_metrics.get('sharpe_ratio', 0):.2f}",

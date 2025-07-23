@@ -11,7 +11,9 @@ class PerformanceMetrics:
     """Calculates various performance metrics for strategy analysis."""
 
     @staticmethod
-    def calculate_basic_metrics(returns: pd.Series) -> dict[str, float]:
+    def calculate_basic_metrics(
+        returns: pd.Series, periods: int = 365
+    ) -> dict[str, float]:
         """Calculate basic performance metrics."""
         clean_returns = returns.dropna()
 
@@ -21,15 +23,22 @@ class PerformanceMetrics:
         try:
             return {
                 "total_return": float(qs.stats.comp(clean_returns)),
-                "apr": float(
-                    qs.stats.cagr(clean_returns, periods=365, compounded=False)
+                "apr": float(qs.stats.comp(clean_returns))
+                / len(clean_returns)
+                * periods,
+                "agr": float(
+                    qs.stats.cagr(clean_returns, periods=periods, compounded=False)
                 ),
                 "cagr": float(
-                    qs.stats.cagr(clean_returns, periods=365, compounded=True)
+                    qs.stats.cagr(clean_returns, periods=periods, compounded=True)
                 ),
-                "volatility": float(qs.stats.volatility(clean_returns, periods=365)),
-                "sharpe_ratio": float(qs.stats.sharpe(clean_returns, periods=365)),
-                "sortino_ratio": float(qs.stats.sortino(clean_returns, periods=365)),
+                "volatility": float(
+                    qs.stats.volatility(clean_returns, periods=periods)
+                ),
+                "sharpe_ratio": float(qs.stats.sharpe(clean_returns, periods=periods)),
+                "sortino_ratio": float(
+                    qs.stats.sortino(clean_returns, periods=periods)
+                ),
                 "calmar_ratio": float(qs.stats.calmar(clean_returns)),
                 "max_drawdown": float(qs.stats.max_drawdown(clean_returns)),
                 "skewness": float(qs.stats.skew(clean_returns)),
@@ -65,7 +74,9 @@ class PerformanceMetrics:
             return {}
 
     @staticmethod
-    def calculate_risk_metrics(returns: pd.Series) -> dict[str, float]:
+    def calculate_risk_metrics(
+        returns: pd.Series, periods: int = 365
+    ) -> dict[str, float]:
         """Calculate risk-specific metrics."""
         clean_returns = returns.dropna()
 
@@ -74,7 +85,9 @@ class PerformanceMetrics:
 
         try:
             return {
-                "volatility": float(qs.stats.volatility(clean_returns, periods=365)),
+                "volatility": float(
+                    qs.stats.volatility(clean_returns, periods=periods)
+                ),
                 "max_drawdown": float(qs.stats.max_drawdown(clean_returns)),
                 "var_95": float(qs.stats.var(clean_returns)),
                 "cvar_95": float(qs.stats.cvar(clean_returns)),
@@ -128,7 +141,7 @@ class PerformanceMetrics:
 
     @staticmethod
     def calculate_rolling_metrics(
-        returns: pd.Series, window: int = 252
+        returns: pd.Series, window: int = 365, periods: int = 365
     ) -> dict[str, pd.Series]:
         """Calculate rolling metrics."""
         clean_returns = returns.dropna()
@@ -142,12 +155,12 @@ class PerformanceMetrics:
                     lambda x: qs.stats.sharpe(x) if len(x) == window else np.nan
                 ),
                 "rolling_volatility": clean_returns.rolling(window).std()
-                * np.sqrt(365),
+                * np.sqrt(periods),
                 "rolling_max_drawdown": clean_returns.rolling(window).apply(
                     lambda x: qs.stats.max_drawdown(x) if len(x) == window else np.nan
                 ),
                 "rolling_sortino": clean_returns.rolling(window).apply(
-                    lambda x: qs.stats.sortino(x, periods=365)
+                    lambda x: qs.stats.sortino(x, periods=periods)
                     if len(x) == window
                     else np.nan
                 ),

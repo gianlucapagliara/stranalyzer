@@ -112,10 +112,11 @@ class ChartGenerator:
     def create_rolling_metrics_chart(
         strategies: dict[str, pd.Series],
         metric: Literal["sharpe", "volatility", "returns"] = "sharpe",
-        window: int = 252,
+        window: int = 365,
         title: str | None = None,
         height: int = 400,
         composite_strategies: list[str] | None = None,
+        periods: int = 365,
     ) -> go.Figure:
         """Create rolling metrics chart."""
 
@@ -139,14 +140,14 @@ class ChartGenerator:
                 rolling_metric = (
                     clean_returns.rolling(window).mean()
                     / clean_returns.rolling(window).std()
-                    * np.sqrt(365)
+                    * np.sqrt(periods)
                 )
             elif metric == "volatility":
                 rolling_metric = (
-                    clean_returns.rolling(window).std() * np.sqrt(365) * 100.0
+                    clean_returns.rolling(window).std() * np.sqrt(periods) * 100.0
                 )
             elif metric == "returns":
-                rolling_metric = clean_returns.rolling(window).mean() * 365 * 100.0
+                rolling_metric = clean_returns.rolling(window).mean() * periods * 100.0
             else:
                 continue
 
@@ -345,6 +346,7 @@ class ChartGenerator:
         title: str = "Risk-Return Analysis",
         height: int = 500,
         composite_strategies: list[str] | None = None,
+        periods: int = 365,
     ) -> go.Figure:
         """Create risk-return scatter plot."""
 
@@ -355,8 +357,8 @@ class ChartGenerator:
             if len(clean_returns) == 0:
                 continue
 
-            annual_return = clean_returns.mean() * 365
-            annual_volatility = clean_returns.std() * np.sqrt(365)
+            annual_return = clean_returns.mean() * periods
+            annual_volatility = clean_returns.std() * np.sqrt(periods)
 
             scatter_data.append(
                 {

@@ -6,15 +6,12 @@ readme = "README.md"
 requires-python = ">=3.12"
 authors = [{ name = "Gianluca Pagliara", email = "pagliara.gianluca@gmail.com" }]
 dependencies = [
-    "polars>=1.19.0,<2.0.0",
     "plotly>=6.0.0,<7.0.0",
     "streamlit>=1.41.1,<2.0.0",
-    "quantstats>=0.0.64,<0.1.0",
     "pandas>=2.3.0,<3.0.0",
-    "matplotlib>=3.8.0,<4.0.0",
-    "numpy>=1.24.0,<2.0.0",
-    "ipython>=9.4.0,<10.0.0",
+    "quantstats>=0.0.64,<0.1.0",
     "quantstats-lumi>=1.0.1,<2.0.0",
+    "numpy>=1.24.0,<2.0.0",
 ]
 
 [dependency-groups]

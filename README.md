@@ -202,6 +202,14 @@ analyzer = StrategyAnalyzer()
 analysis = analyzer.analyze_single_strategy(result["data"], "MyPortfolio")
 ```
 
+## Development (uv)
+
+- Install uv: `curl -LsSf https://astral.sh/uv/install.sh | sh`
+- Create env and install deps: `uv sync`  (installs default groups incl. `dev`)
+- Run tests: `uv run pytest -q`
+- Lint/format: `uv run ruff check . && uv run black --check . && uv run isort --check-only .`
+- Run dashboard: `uv run streamlit run stranalyzer/dashboard.py`
+
 ## License
 
 This project is licensed under the MIT License. 

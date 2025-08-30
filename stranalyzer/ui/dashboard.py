@@ -228,15 +228,31 @@ class Dashboard:
             weights=composite_config["weights"],
             name=composite_config["name"],
             normalize_weights=True,
+            enable_rebalancing=composite_config.get("enable_rebalancing", False),
+            rebalancing_tolerance=composite_config.get("rebalancing_tolerance", 0.05),
+            rebalancing_cost=composite_config.get("rebalancing_cost", 0.001),
+            cost_on_rebalanced_amount=composite_config.get(
+                "cost_on_rebalanced_amount", True
+            ),
         )
 
         if result["success"]:
-            st.session_state.composite_strategies[composite_config["name"]] = {
+            strategy_info = {
                 "data": result["data"],
                 "weights": result["info"]["weights"],
                 "created_at": pd.Timestamp.now(),
                 "contributions": result["info"]["contributions"],
+                "enable_rebalancing": result["info"].get("enable_rebalancing", False),
             }
+
+            if result["info"].get("enable_rebalancing"):
+                strategy_info["rebalancing_info"] = result["info"].get(
+                    "rebalancing", {}
+                )
+
+            st.session_state.composite_strategies[composite_config["name"]] = (
+                strategy_info
+            )
             st.rerun()
         else:
             for error in result["errors"]:

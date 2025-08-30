@@ -183,6 +183,71 @@ class UIComponents:
                 else:
                     normalized_weights = weights
 
+                # Rebalancing settings
+                st.subheader("⚖️ Rebalancing Settings")
+
+                enable_rebalancing = st.checkbox(
+                    "Enable Rebalancing",
+                    value=False,
+                    help="Automatically rebalance the portfolio when weights drift beyond tolerance",
+                )
+
+                rebalancing_tolerance = 0.05
+                rebalancing_cost = 0.001
+                cost_on_rebalanced_amount = True
+
+                if enable_rebalancing:
+                    col1, col2 = st.columns(2)
+
+                    with col1:
+                        rebalancing_tolerance = st.slider(
+                            "Rebalancing Tolerance",
+                            min_value=0.01,
+                            max_value=0.20,
+                            value=0.05,
+                            step=0.01,
+                            format="%.2f",
+                            help="Trigger rebalancing when any weight drifts more than this amount from target",
+                        )
+                        st.caption(f"Tolerance: {rebalancing_tolerance:.1%}")
+
+                    with col2:
+                        rebalancing_cost = (
+                            st.slider(
+                                "Rebalancing Cost (%)",
+                                min_value=0.0,
+                                max_value=2.0,
+                                value=0.1,
+                                step=0.05,
+                                format="%.2f",
+                                help="Cost as percentage per rebalancing event",
+                            )
+                            / 100
+                        )  # Convert percentage to decimal
+                        st.caption(f"Cost: {rebalancing_cost:.3%} per rebalance")
+
+                    # Cost calculation method
+                    cost_on_rebalanced_amount = st.radio(
+                        "Cost Calculation Method",
+                        options=[True, False],
+                        format_func=lambda x: "Rebalanced Amount Only"
+                        if x
+                        else "Total Portfolio Value",
+                        index=0,
+                        help="Choose whether costs apply to only the rebalanced amount or the entire portfolio",
+                    )
+
+                    cost_basis = (
+                        "rebalanced amount"
+                        if cost_on_rebalanced_amount
+                        else "total portfolio value"
+                    )
+                    st.info(
+                        f"📊 **Rebalancing Summary:** Portfolio will be rebalanced when any strategy weight "
+                        f"drifts more than {rebalancing_tolerance:.1%} from its target. "
+                        f"Each rebalancing will cost {rebalancing_cost:.3%} of the {cost_basis}."
+                    )
+
             # Composite strategy name
             composite_name = st.text_input(
                 "Composite Strategy Name:",
@@ -200,6 +265,10 @@ class UIComponents:
                         "name": composite_name,
                         "weights": normalized_weights,
                         "selected_strategies": selected_for_composition,
+                        "enable_rebalancing": enable_rebalancing,
+                        "rebalancing_tolerance": rebalancing_tolerance,
+                        "rebalancing_cost": rebalancing_cost,
+                        "cost_on_rebalanced_amount": cost_on_rebalanced_amount,
                     }
                     st.success(
                         f"✅ Composite strategy '{composite_name}' created successfully!"
@@ -222,7 +291,10 @@ class UIComponents:
             st.subheader("📊 Existing Composite Strategies")
 
             for name, info in composite_strategies.items():
-                with st.expander(f"📈 {name}", expanded=True):
+                rebalancing_enabled = info.get("enable_rebalancing", False)
+                title_icon = "⚖️" if rebalancing_enabled else "📈"
+
+                with st.expander(f"{title_icon} {name}", expanded=True):
                     col1, col2 = st.columns([2, 1])
 
                     with col1:
@@ -239,6 +311,28 @@ class UIComponents:
                         )
                         st.dataframe(weights_df, use_container_width=True)
 
+                        # Show rebalancing information if enabled
+                        if rebalancing_enabled and "rebalancing_info" in info:
+                            rebal_info = info["rebalancing_info"]
+                            st.write("**Rebalancing Summary:**")
+
+                            rebal_cols = st.columns(3)
+                            with rebal_cols[0]:
+                                st.metric(
+                                    "Rebalancing Events",
+                                    rebal_info.get("total_rebalancing_events", 0),
+                                )
+                            with rebal_cols[1]:
+                                st.metric(
+                                    "Total Cost",
+                                    f"{rebal_info.get('total_rebalancing_cost', 0.0):.3%}",
+                                )
+                            with rebal_cols[2]:
+                                st.metric(
+                                    "Avg Drift",
+                                    f"{rebal_info.get('average_drift', 0.0):.2%}",
+                                )
+
                     with col2:
                         st.write("**Actions:**")
                         if st.button(f"Remove {name}", key=f"remove_{name}"):
@@ -254,6 +348,23 @@ class UIComponents:
                                 mime="text/csv",
                                 key=f"download_{name}",
                             )
+
+                        # Show rebalancing status
+                        if rebalancing_enabled:
+                            st.success("✅ Rebalancing Enabled")
+                            rebal_info = info.get("rebalancing_info", {})
+                            cost_method = (
+                                "Rebalanced Amount"
+                                if info.get("cost_on_rebalanced_amount", True)
+                                else "Total Portfolio"
+                            )
+                            st.caption(
+                                f"Tolerance: {rebal_info.get('tolerance', 0.05):.1%}\n"
+                                f"Cost: {rebal_info.get('cost', 0.001):.3%}\n"
+                                f"Cost Method: {cost_method}"
+                            )
+                        else:
+                            st.info("📊 Static Weights")
 
         return removed_strategies
 
